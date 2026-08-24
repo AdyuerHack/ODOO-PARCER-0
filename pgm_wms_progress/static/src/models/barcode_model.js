@@ -3,7 +3,7 @@
 import { patch } from "@web/core/utils/patch";
 import { BarcodeModel } from "@stock_barcode/models/barcode_model";
 
-patch(BarcodeModel.prototype, {
+patch(BarcodeModel.prototype, "pgm_wms_progress.BarcodeModel", {
     async processBarcode(barcode) {
         // Interceptamos el escaneo normal
         const res = await super.processBarcode(...arguments);
