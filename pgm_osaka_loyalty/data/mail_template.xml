@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paso 4.1: Archivar plantilla vieja si existe (salta noupdate) -->
+    <data noupdate="0">
+        
+        <!-- Este record sirve de 'stub' en instalaciones nuevas para que la referencia no sea False.
+             En upgrades, sobrescribe y archiva la vieja. -->
+        <record id="mail_template_osaka_monthly" model="mail.template">
+            <field name="name">Osaka: Notificación Mensual (Obsoleta)</field>
+            <field name="model_id" ref="loyalty.model_loyalty_card"/>
+            <field name="subject">Obsoleto</field>
+            <field name="active" eval="False"/>
+            <field name="body_html" type="html"><div/></field>
+        </record>
+    </data>
+
+    <!-- Paso 4.2: Crear plantilla consolidada -->
+    <data noupdate="1">
+        <record id="mail_template_osaka_partner_monthly" model="mail.template">
+            <field name="name">Osaka: Notificación Mensual Consolidada</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="subject">Tu resumen mensual de puntos Osaka</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Hola <t t-out="object.name or 'Cliente'"></t>,<br /><br />
+        Aquí tienes tu resumen mensual de nuestros programas de lealtad:<br /><br />
+        
+        <!-- Usamos el método definido en res.partner para buscar las tarjetas -->
+        <t t-set="osaka_cards" t-value="object._get_osaka_cards_for_monthly_mail()"/>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <t t-foreach="osaka_cards" t-as="card">
+                <tr>
+                    <td colspan="2" style="font-weight: bold; padding: 8px 0; border-bottom: 1px solid #ddd;">
+                        <t t-out="card.program_id.name"></t>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px 0;">Saldo actual:</td>
+                    <td style="padding: 4px 0; text-align: right; font-weight: bold;">
+                        <t t-out="'%g' % card.points"></t> puntos
+                    </td>
+                </tr>
+                <tr t-if="card.puntos_a_vencer_este_mes &gt; 0">
+                    <td style="padding: 4px 0; color: #d84315; font-size: 11px;">⚠ A vencer este mes:</td>
+                    <td style="padding: 4px 0; text-align: right; color: #d84315; font-size: 11px; font-weight: bold;">
+                        <t t-out="'%g' % card.puntos_a_vencer_este_mes"></t> puntos
+                    </td>
+                </tr>
+            </t>
+        </table>
+        
+        <br/><br/>
+        ¡Aprovecha y usa tus puntos en tu próxima compra!<br/>
+        Gracias por tu lealtad.<br/>
+    </p>
+</div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

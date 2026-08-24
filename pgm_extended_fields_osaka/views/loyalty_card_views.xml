@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extender la vista formulario de la tarjeta de lealtad - VERSIÓN CORREGIDA -->
+    <record id="loyalty_card_view_form_inherit" model="ir.ui.view">
+        <field name="name">loyalty.card.view.form.inherit</field>
+        <field name="model">loyalty.card</field>
+        <field name="inherit_id" ref="loyalty.loyalty_card_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!--
+                Campo oculto: no es la caducidad real de Osaka (esa es
+                loyalty.program.validez_puntos_meses). Solo filtraba el display
+                y confundía al usuario. Se mantiene en modelo por compatibilidad.
+            -->
+            <xpath expr="//button[@name='action_loyalty_update_balance']" position="after">
+                <field name="pgm_points_validity_months" string="Validez de puntos" invisible="True"/>
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Resumen debajo del bloque de totales del PDF (clearfix), no mezclado
+        con la columna de Subtotal/Total.
+    -->
+    <template id="report_invoice_document_inherit_osaka_loyalty" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='total']/.." position="after">
+            <t t-set="osaka_summary" t-value="o._get_osaka_loyalty_summary_data()"/>
+            <t t-if="osaka_summary">
+                <div class="row mt-3 mb-3 clearfix" style="page-break-inside: avoid;">
+                    <div class="col-12">
+                        <t t-call="pgm_osaka_loyalty.template_osaka_loyalty_summary"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pgm_wms_progress.Dashboard">
+        <div class="o_wms_dashboard_action">
+            <div class="container-fluid py-4 bg-100">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="text-primary fw-bold">Dashboard de Productividad WMS</h2>
+                        <p class="text-muted">Métricas en tiempo real (Últimos 15 días)</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <!-- Gráfica Hourly -->
+                    <div class="col-lg-8 mb-4 mb-lg-0">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <canvas t-ref="hourlyCanvas" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfica Circular -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <canvas t-ref="pieCanvas" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Gráfica Diaria -->
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <canvas t-ref="dailyCanvas" style="width: 100%; height: 350px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

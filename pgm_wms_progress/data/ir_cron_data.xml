@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cron: Failsafe para cerrar intervalos inactivos -->
+        <record id="ir_cron_wms_failsafe_inactivity" model="ir.cron">
+            <field name="name">Progreso WMS: Failsafe de inactividad</field>
+            <field name="model_id" ref="model_stock_picking_progress_interval"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_failsafe_inactivity()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Cron: Cierre automático de hora cruzada y muertos prolongados -->
+        <record id="ir_cron_wms_split_hour" model="ir.cron">
+            <field name="name">Progreso WMS: Segmentación por cambio de hora</field>
+            <field name="model_id" ref="model_stock_picking_progress_interval"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_split_hour()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+            <field name="nextcall" eval="(DateTime.now().replace(minute=0, second=0) + relativedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+    </data>
+</odoo>

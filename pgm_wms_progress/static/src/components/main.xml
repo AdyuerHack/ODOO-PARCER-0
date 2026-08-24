@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Inyectar botones en el header del Barcode -->
+    <t t-inherit="stock_barcode.MainComponent" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_barcode_control')]" position="inside">
+            <!-- Botones Pausa / Play WMS -->
+            <button t-if="env.model.record and env.model.record.seguimiento_wms"
+                    class="btn btn-warning o_wms_pause_btn me-2" 
+                    t-on-click="() => env.model.actionWmsPause()">
+                <i class="fa fa-pause"/> Pausar
+            </button>
+            <button t-if="env.model.record and env.model.record.seguimiento_wms"
+                    class="btn btn-success o_wms_play_btn me-2" 
+                    t-on-click="() => env.model.actionWmsPlay()">
+                <i class="fa fa-play"/> Play
+            </button>
+        </xpath>
+    </t>
+
+    <!-- Inyectar botón 'Cerrar línea' en las líneas del barcode -->
+    <t t-inherit="stock_barcode.LineComponent" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_barcode_line_actions')]" position="inside">
+            <button class="btn btn-danger o_wms_close_line_btn"
+                    t-on-click="() => env.model.actionWmsCloseLine(line)">
+                <i class="fa fa-times"/> Cerrar
+            </button>
+        </xpath>
+    </t>
+</templates>

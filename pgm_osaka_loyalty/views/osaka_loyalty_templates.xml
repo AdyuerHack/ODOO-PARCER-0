@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Template QWeb unificado para el resumen de lealtad Osaka.
+        Se usa en:
+          - Vista formulario de account.move (via ir.qweb._render)
+          - Reporte PDF de factura (via t-call)
+        Variable de contexto esperada: osaka_summary (lista de dicts)
+    -->
+    <template id="template_osaka_loyalty_summary">
+        <div style="border: 2px solid #b71c1c; border-radius: 6px; margin-top: 15px; page-break-inside: avoid; width: 100%; box-sizing: border-box; clear: both;">
+            <div style="background-color: #b71c1c; color: white; padding: 8px 15px; font-weight: bold; font-size: 14px; text-transform: uppercase;">
+                ★ Resumen de Lealtad Osaka
+            </div>
+            <div style="padding: 10px 15px; background: #fffaf9;">
+                <t t-foreach="osaka_summary" t-as="item">
+                    <div t-att-style="'margin-top: 10px; border-top: 1px solid #ffcdd2; padding-top: 10px;' if not item_first else ''">
+                        <div style="font-weight: bold; color: #b71c1c; margin-bottom: 8px; font-size: 13px;">
+                            <t t-esc="item['program_name']"/>
+                        </div>
+                        <table style="width: 100%; font-size: 12px; color: #424242; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 4px 6px; font-weight: bold;">Saldo Anterior:</td>
+                                <td style="padding: 4px 6px;">
+                                    <t t-if="item['program_name'].lower() == 'puntos osaka'">$ </t>
+                                    <t t-esc="'{:,.0f}'.format(item['saldo_anterior']).replace(',', '.')"/>
+                                    <t t-if="item['program_name'].lower() != 'puntos osaka'"> Pts</t>
+                                </td>
+                                <td style="padding: 4px 6px; font-weight: bold;">
+                                    <t t-if="item['issued'] >= 0">Puntos Ganados:</t>
+                                    <t t-else="">Puntos Revertidos:</t>
+                                </td>
+                                <td style="padding: 4px 6px; font-weight: bold;"
+                                    t-att-style="'padding: 4px 6px; font-weight: bold; color: %s;' % ('#2e7d32' if item['issued'] >= 0 else '#c62828')">
+                                    <t t-if="item['issued'] > 0">+</t>
+                                    <t t-if="item['program_name'].lower() == 'puntos osaka'">$ </t>
+                                    <t t-esc="'{:,.0f}'.format(item['issued']).replace(',', '.')"/>
+                                    <t t-if="item['program_name'].lower() != 'puntos osaka'"> Pts</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 4px 6px; font-weight: bold;">Puntos Utilizados:</td>
+                                <td style="padding: 4px 6px; color: #c62828;">
+                                    <t t-if="item['used'] > 0">-</t>
+                                    <t t-if="item['program_name'].lower() == 'puntos osaka'">$ </t>
+                                    <t t-esc="'{:,.0f}'.format(item['used']).replace(',', '.')"/>
+                                    <t t-if="item['program_name'].lower() != 'puntos osaka'"> Pts</t>
+                                </td>
+                                <td style="padding: 4px 6px; font-weight: bold; font-size: 13px; color: #b71c1c;">Nuevo Saldo:</td>
+                                <td style="padding: 4px 6px; font-weight: bold; font-size: 13px; color: #b71c1c;">
+                                    <t t-if="item['program_name'].lower() == 'puntos osaka'">$ </t>
+                                    <t t-esc="'{:,.0f}'.format(item['total']).replace(',', '.')"/>
+                                    <t t-if="item['program_name'].lower() != 'puntos osaka'"> Pts</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"></td>
+                                <td style="padding: 4px 6px; font-weight: bold; color: #e65100; font-size: 12px;">⚠ A vencer este mes:</td>
+                                <td style="padding: 4px 6px; font-weight: bold; color: #e65100; font-size: 12px;">
+                                    <t t-if="item['program_name'].lower() == 'puntos osaka'">$ </t>
+                                    <t t-esc="'{:,.0f}'.format(item.get('expiring', 0)).replace(',', '.')"/>
+                                    <t t-if="item['program_name'].lower() != 'puntos osaka'"> Pts</t>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+</odoo>

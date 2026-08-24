@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="loyalty_card_view_form_inherit_osaka" model="ir.ui.view">
+        <field name="name">loyalty.card.view.form.inherit.osaka</field>
+        <field name="model">loyalty.card</field>
+        <field name="inherit_id" ref="loyalty.loyalty_card_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Ocultar campo de caducidad estándar y agregar el nuestro -->
+            <xpath expr="//field[@name='expiration_date']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='expiration_date']" position="after">
+                <label for="puntos_a_vencer_este_mes"/>
+                <div class="o_row">
+                    <field name="puntos_a_vencer_este_mes" readonly="1"/>
+                    <button name="action_recalculate_points_osaka" type="object" string="🔄 Recalcular" class="btn btn-sm btn-link mb-1"/>
+                </div>
+            </xpath>
+            
+            <!-- Modificar la lista del historial -->
+            <xpath expr="//field[@name='history_ids']/list/field[@name='order_id']" position="before">
+                <field name="invoice_id"/>
+            </xpath>
+            <xpath expr="//field[@name='history_ids']/list/field[@name='create_date']" position="after">
+                <field name="f_creacion_factura" optional="show"/>
+                <field name="f_vencimiento_factura" optional="show"/>
+                <field name="f_vencimiento_puntos" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='history_ids']/list/field[@name='used']" position="after">
+                <field name="vencidos"/>
+                <field name="is_reversal" optional="show"/>
+                <field name="is_reversed" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

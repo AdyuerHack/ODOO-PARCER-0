@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_picking_progress_interval_tree" model="ir.ui.view">
+        <field name="name">stock.picking.progress.interval.tree</field>
+        <field name="model">stock.picking.progress.interval</field>
+        <field name="arch" type="xml">
+            <list string="Detalle progreso WMS" create="0" edit="0" delete="0">
+                <field name="picking_id"/>
+                <field name="picking_type_id"/>
+                <field name="user_id"/>
+                <field name="interval_type"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="qty_done"/>
+                <field name="hour_of_day" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_progress_interval_form" model="ir.ui.view">
+        <field name="name">stock.picking.progress.interval.form</field>
+        <field name="model">stock.picking.progress.interval</field>
+        <field name="arch" type="xml">
+            <form string="Detalle progreso WMS" create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="picking_id" readonly="1"/>
+                            <field name="picking_type_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="interval_type"/>
+                            <field name="qty_done"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group>
+                            <field name="hour_of_day" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- La acción para el menú que se ubicará en Inventario -> Reportes -->
+    <record id="action_stock_picking_progress_interval" model="ir.actions.act_window">
+        <field name="name">Detalle progreso WMS</field>
+        <field name="res_model">stock.picking.progress.interval</field>
+        <field name="view_mode">list,form</field>
+        <!-- Filtramos solo las operaciones que tienen seguimiento WMS -->
+        <field name="domain">[('picking_type_id.seguimiento_wms', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No hay intervalos registrados aún.
+            </p>
+        </field>
+    </record>
+
+    <!-- Acción de Cliente OWL para el Dashboard -->
+    <record id="action_wms_progress_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard Productividad WMS</field>
+        <field name="tag">wms_progress_dashboard</field>
+    </record>
+
+    <!-- Menús en Inventario -> Reportes -->
+    <menuitem id="menu_wms_progress_root" 
+              name="Productividad WMS" 
+              parent="stock.menu_warehouse_report" 
+              sequence="50"/>
+
+    <menuitem id="menu_wms_progress_dashboard" 
+              name="Dashboard" 
+              parent="menu_wms_progress_root" 
+              action="action_wms_progress_dashboard" 
+              sequence="10"/>
+
+    <menuitem id="menu_stock_picking_progress_interval" 
+              name="Detalle Intervalos" 
+              parent="menu_wms_progress_root" 
+              action="action_stock_picking_progress_interval" 
+              sequence="20"/>
+</odoo>

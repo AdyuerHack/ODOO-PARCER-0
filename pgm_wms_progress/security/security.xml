@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="module_category_wms_progress" model="ir.module.category">
+            <field name="name">Progreso WMS</field>
+            <field name="description">Categoría para la gestión del progreso WMS</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="privilege_wms_corrector" model="res.groups.privilege">
+            <field name="name">Corrector de Tiempos WMS</field>
+            <field name="category_id" ref="module_category_wms_progress"/>
+        </record>
+
+        <record id="group_wms_corrector" model="res.groups">
+            <field name="name">Corrector de Tiempos WMS</field>
+            <field name="privilege_id" ref="privilege_wms_corrector"/>
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="comment">Permite corregir manualmente los registros de intervalos de tiempo WMS ya cerrados.</field>
+        </record>
+    </data>
+</odoo>

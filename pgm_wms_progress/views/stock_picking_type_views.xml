@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_type_form_inherit_pgm_wms" model="ir.ui.view">
+        <field name="name">stock.picking.type.view.form.inherit.pgm.wms</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Progreso WMS" name="progreso_wms">
+                    <group string="Configuración de Seguimiento">
+                        <field name="seguimiento_wms" widget="boolean_toggle"/>
+                    </group>
+                    <group string="Identificadores (Filtros de Dashboard)">
+                        <field name="is_aduana_wms"/>
+                        <field name="is_picking_wms"/>
+                        <field name="is_entrega_wms"/>
+                        <field name="is_recibo_pt_wms"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

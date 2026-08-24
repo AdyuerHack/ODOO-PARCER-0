@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_osaka_loyalty" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.osaka.loyalty</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!--
+                Tras el grupo que contiene tax_totals (no dentro de la columna
+                estrecha) para no cortar labels Subtotal/Total ni el resumen.
+            -->
+            <xpath expr="//field[@name='tax_totals']/../.." position="after">
+                <group colspan="4" invisible="not osaka_loyalty_summary_html">
+                    <field name="osaka_loyalty_summary_html" nolabel="1" colspan="4"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

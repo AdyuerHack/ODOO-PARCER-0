@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_osaka" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.osaka</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//setting[@id='coupon_settings']" position="after">
+                <setting id="osaka_dias_gracia" string="Vencimiento de Puntos Osaka" help="Días de gracia después del vencimiento de la factura">
+                    <field name="dias_vencimiento_factura"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_inherit_pgm_wms" model="ir.ui.view">
+        <field name="name">stock.picking.view.form.inherit.pgm.wms</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_progress_intervals"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-clock-o"
+                        invisible="progress_interval_count == 0">
+                    <field name="progress_interval_count" widget="statinfo" string="Detalle Progreso"/>
+                </button>
+            </div>
+            
+            <!-- estado_linea is no longer injected into operations view to avoid Odoo 19 compatibility issues -->
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="progreso_lineas" widget="progressbar"/>
+                <field name="progreso_unidades" widget="progressbar"/>
+                <field name="velocidad_wms"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_tree_inherit_pgm_wms" model="ir.ui.view">
+        <field name="name">stock.picking.view.tree.inherit.pgm.wms</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="progreso_lineas" widget="progressbar" optional="show"/>
+                <field name="progreso_unidades" widget="progressbar" optional="hide"/>
+                <field name="velocidad_wms" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

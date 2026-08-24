@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista en Árbol de Órdenes de Venta (Específica para Progreso Despacho) -->
+    <record id="view_sale_order_wms_progress_tree" model="ir.ui.view">
+        <field name="name">sale.order.wms.progress.tree</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list string="Progreso Despacho WMS" sample="1">
+                <field name="name" string="Pedido"/>
+                <field name="partner_id"/>
+                <field name="date_order"/>
+                <field name="amount_total" decoration-bf="1"/>
+                <field name="state" widget="badge"/>
+                <field name="progreso_picking_wms" widget="progressbar"/>
+                <field name="velocidad_picking_wms"/>
+                <field name="progreso_aduana_wms" widget="progressbar"/>
+                <field name="velocidad_aduana_wms"/>
+                <field name="progreso_entrega_wms" widget="progressbar"/>
+                <field name="velocidad_entrega_wms"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario de Órdenes de Venta (Herencia para agregar página WMS) -->
+    <record id="view_sale_order_form_inherit_wms_progress" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.wms.progress</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Progreso WMS" name="wms_progress">
+                    <group>
+                        <group string="Progreso por Etapa">
+                            <field name="progreso_picking_wms" widget="progressbar"/>
+                            <field name="progreso_aduana_wms" widget="progressbar"/>
+                            <field name="progreso_entrega_wms" widget="progressbar"/>
+                        </group>
+                        <group string="Velocidad por Etapa (Und/Hr)">
+                            <field name="velocidad_picking_wms"/>
+                            <field name="velocidad_aduana_wms"/>
+                            <field name="velocidad_entrega_wms"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Acción de Ventana para Progreso Despacho -->
+    <record id="action_sale_order_wms_progress" model="ir.actions.act_window">
+        <field name="name">Progreso Despacho</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_sale_order_wms_progress_tree"/>
+        <field name="domain">[('state', 'in', ['sale', 'done'])]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aquí podrás ver el progreso y velocidad consolidada de tus pedidos.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú en Ventas -->
+    <menuitem id="menu_sale_order_wms_progress_sale" 
+              name="Progreso Despacho" 
+              parent="sale.sale_order_menu" 
+              action="action_sale_order_wms_progress" 
+              sequence="15"/>
+
+    <!-- Menú en Inventario -->
+    <menuitem id="menu_sale_order_wms_progress_inventory" 
+              name="Progreso Despacho" 
+              parent="stock.menu_warehouse_report" 
+              action="action_sale_order_wms_progress" 
+              sequence="60"/>
+</odoo>
