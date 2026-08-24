@@ -37,7 +37,7 @@ Implementa el requerimiento "Progreso y velocidad WMS V3" para OSAKAPARTS:
     ],
     'assets': {
         'web.assets_backend': [
-            # 'pgm_wms_progress/static/src/models/barcode_model.js',
+            'pgm_wms_progress/static/src/models/barcode_model.js',
             # 'pgm_wms_progress/static/src/components/main.xml',
             'pgm_wms_progress/static/src/components/dashboard/dashboard.js',
             'pgm_wms_progress/static/src/components/dashboard/dashboard.xml',
