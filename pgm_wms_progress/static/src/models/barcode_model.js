@@ -1,9 +1,12 @@
 /** @odoo-module **/
 
 import { patch } from "@web/core/utils/patch";
-import { BarcodeModel } from "@stock_barcode/models/barcode_model";
+import * as barcodeModelModule from "@stock_barcode/models/barcode_model";
 
-patch(BarcodeModel.prototype, "pgm_wms_progress.BarcodeModel", {
+const BarcodeModel = barcodeModelModule.BarcodeModel || barcodeModelModule.default;
+
+if (BarcodeModel) {
+    patch(BarcodeModel.prototype, "pgm_wms_progress.BarcodeModel", {
     async processBarcode(barcode) {
         // Interceptamos el escaneo normal
         const res = await super.processBarcode(...arguments);
@@ -53,3 +56,4 @@ patch(BarcodeModel.prototype, "pgm_wms_progress.BarcodeModel", {
         }
     }
 });
+}
