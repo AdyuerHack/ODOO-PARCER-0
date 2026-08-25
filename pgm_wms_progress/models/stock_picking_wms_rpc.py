@@ -10,11 +10,11 @@ class StockPicking(models.Model):
 
     @api.model
     def process_wms_scan(self, picking_id, action='scan', line_id=None):
-        """
+        \"\"\"
         Punto de entrada principal RPC desde la PDA.
-        Gestiona la lógica asíncrona de tiempos (Productivo/Muerto).
+        Gestiona la l�gica as�ncrona de tiempos (Productivo/Muerto).
         action puede ser: 'scan', 'pause', 'play', 'close_line'
-        """
+        \"\"\"
         picking = self.browse(picking_id)
         if not picking.exists() or not picking.picking_type_id.seguimiento_wms:
             return {'status': 'ignored'}
@@ -22,7 +22,11 @@ class StockPicking(models.Model):
         now = fields.Datetime.now()
         user_id = self.env.user.id
         
-        # Buscar intervalo activo actual del usuario para este picking
+        # Helper para obtener progreso actual
+        def get_current_qty():
+            valid_moves = picking.move_ids.filtered(lambda m: not m.sale_line_id or m.sale_line_id.product_uom_qty > 0)
+            return sum(valid_moves.mapped('quantity'))
+            
         IntervalModel = self.env['stock.picking.progress.interval']
         
         if action == 'close_line' and line_id:
@@ -32,7 +36,6 @@ class StockPicking(models.Model):
                 return {'status': 'line_closed'}
                 
         # 1. Aplicar Regla: Cambio transversal
-        # Cerrar cualquier otro intervalo abierto de este usuario en OTRO picking
         other_open_intervals = IntervalModel.search([
             ('user_id', '=', user_id),
             ('date_end', '=', False),
@@ -51,7 +54,6 @@ class StockPicking(models.Model):
         if action == 'pause':
             if current_interval and current_interval.interval_type == 'productivo':
                 current_interval.write({'date_end': now})
-                # Iniciar tiempo muerto manual
                 IntervalModel.create({
                     'picking_id': picking.id,
                     'user_id': user_id,
@@ -63,13 +65,12 @@ class StockPicking(models.Model):
         elif action == 'play':
             if current_interval and current_interval.interval_type == 'muerto':
                 current_interval.write({'date_end': now})
-                # Iniciar tiempo productivo manual
                 IntervalModel.create({
                     'picking_id': picking.id,
                     'user_id': user_id,
                     'interval_type': 'productivo',
                     'date_start': now,
-                    'qty_done': 0, # Se incrementará en el próximo escaneo real
+                    'initial_picking_qty': get_current_qty(),
                 })
             elif not current_interval:
                 IntervalModel.create({
@@ -77,19 +78,14 @@ class StockPicking(models.Model):
                     'user_id': user_id,
                     'interval_type': 'productivo',
                     'date_start': now,
-                    'qty_done': 0,
+                    'initial_picking_qty': get_current_qty(),
                 })
             return {'status': 'playing'}
             
         elif action == 'scan':
-            # Obtener umbral de inactividad de los settings
             inactivity_minutes = int(self.env['ir.config_parameter'].sudo().get_param('pgm_wms_progress.inactivity_minutes', 30))
             
             if not current_interval:
-                # Caso especial: El usuario podría tener un intervalo productivo previo que cerró pero
-                # queremos ver si pasó demasiado tiempo desde su último escaneo.
-                # Para simplificar en Fase 2, si no hay actual, abrimos uno.
-                # PERO primero revisamos si hubo inactividad excesiva buscando el último cerrado.
                 last_closed = IntervalModel.search([
                     ('user_id', '=', user_id),
                     ('picking_id', '=', picking.id),
@@ -100,7 +96,6 @@ class StockPicking(models.Model):
                 if last_closed and last_closed.date_end:
                     time_diff = (now - last_closed.date_end).total_seconds() / 60.0
                     if time_diff > inactivity_minutes:
-                        # Regla 30 min inactividad: se asume que todo ese tiempo fue muerto
                         IntervalModel.create({
                             'picking_id': picking.id,
                             'user_id': user_id,
@@ -109,55 +104,45 @@ class StockPicking(models.Model):
                             'date_end': now
                         })
 
-                # Ahora sí, abrimos el nuevo productivo y le sumamos 1 unidad
                 IntervalModel.create({
                     'picking_id': picking.id,
                     'user_id': user_id,
                     'interval_type': 'productivo',
                     'date_start': now,
-                    'qty_done': 1,
+                    'initial_picking_qty': get_current_qty(),
                 })
             else:
                 if current_interval.interval_type == 'muerto':
-                    # Si escanea estando en pausa/muerto, automáticamente pasa a Play
                     current_interval.write({'date_end': now})
                     IntervalModel.create({
                         'picking_id': picking.id,
                         'user_id': user_id,
                         'interval_type': 'productivo',
                         'date_start': now,
-                        'qty_done': 1,
+                        'initial_picking_qty': get_current_qty(),
                     })
                 else:
-                    # Regla Split Hora Exacta (cruce de hora)
-                    # Revisar si el intervalo actual cruzó a una hora distinta a la actual
                     current_tz = pytz.timezone(self.env.user.tz or 'UTC')
                     start_local = pytz.utc.localize(current_interval.date_start).astimezone(current_tz)
                     now_local = pytz.utc.localize(now).astimezone(current_tz)
                     
                     if start_local.hour != now_local.hour:
-                        # Cruzó la hora, cerrar el viejo al filo de la hora anterior
-                        # Ejemplo: empezó a las 09:45, ahora son las 10:02
-                        # Cerrar a las 09:59:59
                         end_of_hour = start_local.replace(minute=59, second=59, microsecond=999999).astimezone(pytz.utc).replace(tzinfo=None)
                         current_interval.write({'date_end': end_of_hour})
                         
-                        # Abrir el nuevo a las 10:00:00 (o ahora)
                         start_of_new_hour = now_local.replace(minute=0, second=0, microsecond=0).astimezone(pytz.utc).replace(tzinfo=None)
                         IntervalModel.create({
                             'picking_id': picking.id,
                             'user_id': user_id,
                             'interval_type': 'productivo',
                             'date_start': start_of_new_hour,
-                            'qty_done': 1,
+                            'initial_picking_qty': get_current_qty(),
                         })
                     else:
-                        # Está en la misma hora, simplemente sumar cantidad y actualizar write_date (automático en Odoo)
-                        # Pero Odoo no actualiza write_date si no cambia el valor, forzaremos si es necesario.
-                        # Para inmutabilidad permitimos update de qty_done si date_end es False.
-                        current_interval.write({
-                            'qty_done': current_interval.qty_done + 1
-                        })
+                        # Si es el mismo intervalo y misma hora, no sumamos ciegamente +1.
+                        # El c�lculo de cantidades completadas (qty_done) lo realiza el modelo de forma computada.
+                        # Forzamos una escritura vac�a si quisi�ramos actualizar write_date, pero ya nos apalancamos en el write_date del picking.
+                        pass
 
             return {'status': 'scanned'}
 

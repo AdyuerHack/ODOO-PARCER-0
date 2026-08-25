@@ -20,8 +20,9 @@
     <!-- Inyectar botón 'Cerrar línea' en las líneas del barcode -->
     <t t-inherit="stock_barcode.LineComponent" t-inherit-mode="extension">
         <xpath expr="." position="inside">
-            <button class="btn btn-danger o_wms_close_line_btn"
-                    t-on-click="() =&gt; env.model.actionWmsCloseLine(line)">
+            <button t-if="env.model.record and env.model.record.seguimiento_wms"
+                    class="btn btn-danger o_wms_close_line_btn"
+                    t-on-click="() =&gt; env.model.actionWmsCloseLine(props.line)">
                 <i class="fa fa-times"/> Cerrar
             </button>
         </xpath>

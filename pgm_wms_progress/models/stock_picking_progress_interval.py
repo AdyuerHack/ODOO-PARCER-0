@@ -18,17 +18,30 @@ class StockPickingProgressInterval(models.Model):
         ('productivo', 'Tiempo productivo'),
         ('muerto', 'Tiempo muerto')
     ], string='Tipo', required=True, default='productivo')
-    qty_done = fields.Float(string='Cantidades', default=0.0)
+    
+    initial_picking_qty = fields.Float(string='Cant. Inicial Picking', default=0.0, help='Cantidad de unidades ya completadas al iniciar este intervalo.')
+    qty_done = fields.Float(string='Cantidades', compute='_compute_qty_done', store=True)
     
     # Campo computado y almacenado para facilitar filtros del Dashboard
     hour_of_day = fields.Integer(string='Hora del día', compute='_compute_hour_of_day', store=True)
+
+    @api.depends('picking_id.move_ids.quantity')
+    def _compute_qty_done(self):
+        for record in self:
+            if record.interval_type == 'productivo':
+                valid_moves = record.picking_id.move_ids.filtered(lambda m: not m.sale_line_id or m.sale_line_id.product_uom_qty > 0)
+                current_done = sum(valid_moves.mapped('quantity'))
+                record.qty_done = max(0.0, current_done - record.initial_picking_qty)
+            else:
+                record.qty_done = 0.0
 
     @api.depends('date_start')
     def _compute_hour_of_day(self):
         for record in self:
             if record.date_start:
                 # Convertir UTC a hora local del usuario para agrupar correctamente
-                user_tz = pytz.timezone(self.env.user.tz or 'UTC')
+                user_tz_name = record.user_id.tz or self.env.user.tz or 'UTC'
+                user_tz = pytz.timezone(user_tz_name)
                 local_time = pytz.utc.localize(record.date_start).astimezone(user_tz)
                 record.hour_of_day = local_time.hour
             else:
@@ -36,16 +49,18 @@ class StockPickingProgressInterval(models.Model):
 
     def write(self, vals):
         """
-        Bloquear modificaciones si el intervalo ya está cerrado (tiene date_end),
-        salvo que el usuario pertenezca al grupo de corrección wms_corrector.
-        Sin embargo, se permite asignar date_end si aún estaba abierto, o actualizar qty_done.
+        Inmutabilidad estricta. Si el intervalo está cerrado, solo un 'wms_corrector' puede modificarlo.
+        Si está abierto, solo el sistema (RPC/cron) puede actualizar campos permitidos.
         """
+        allowed_fields_open = {'date_end', 'duration_minutes', 'qty_done'}
         for record in self:
-            # Si el registro ya estaba cerrado antes de esta modificación
-            if record.date_end:
-                # Y el usuario NO tiene el grupo de bypass de corrección
-                if not self.env.user.has_group('pgm_wms_progress.group_wms_corrector'):
-                    raise UserError(_("Inmutabilidad WMS: No se puede modificar un intervalo de tiempo que ya ha sido cerrado."))
+            if record.date_end and not self.env.user.has_group('pgm_wms_progress.group_wms_corrector'):
+                raise UserError(_("Inmutabilidad WMS: No se puede modificar un intervalo de tiempo que ya ha sido cerrado."))
+            elif not record.date_end and not self.env.user.has_group('pgm_wms_progress.group_wms_corrector'):
+                # Validar whitelist si está abierto. Odoo actualiza write_date automáticamente.
+                invalid_fields = set(vals.keys()) - allowed_fields_open - {'write_date', 'write_uid'}
+                if invalid_fields:
+                    raise UserError(_("Inmutabilidad WMS: Solo el sistema puede actualizar el progreso o cerrar el intervalo."))
         return super(StockPickingProgressInterval, self).write(vals)
 
     def unlink(self):
@@ -86,19 +101,17 @@ class StockPickingProgressInterval(models.Model):
             ('date_end', '=', False)
         ])
         for interval in open_productive:
-            last_activity = interval.write_date or interval.date_start
+            last_activity = max(interval.write_date or interval.date_start, interval.picking_id.write_date or interval.picking_id.create_date)
             delta = (now - last_activity).total_seconds() / 60.0
             
             if delta > inactivity_minutes:
                 # Cerrar retroactivamente productivo
                 interval.write({'date_end': last_activity})
-                # Crear solo un muerto abierto desde la última actividad
                 self.create({
                     'picking_id': interval.picking_id.id,
                     'user_id': interval.user_id.id,
                     'interval_type': 'muerto',
                     'date_start': last_activity,
-                    'qty_done': 0,
                 })
                 
         # 2. Cierre de tiempos muertos largos
@@ -132,10 +145,13 @@ class StockPickingProgressInterval(models.Model):
                 
                 interval.write({'date_end': cut_time_utc})
                 
+                valid_moves = interval.picking_id.move_ids.filtered(lambda m: not m.sale_line_id or m.sale_line_id.product_uom_qty > 0)
+                current_done = sum(valid_moves.mapped('quantity'))
+                
                 self.create({
                     'picking_id': interval.picking_id.id,
                     'user_id': interval.user_id.id,
                     'interval_type': interval.interval_type,
                     'date_start': cut_time_utc,
-                    'qty_done': 0,
+                    'initial_picking_qty': current_done if interval.interval_type == 'productivo' else 0.0,
                 })
