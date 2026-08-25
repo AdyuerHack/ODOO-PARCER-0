@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ï»¿# -*- coding: utf-8 -*-
 
 from odoo import models, api, fields, _
 from odoo.exceptions import UserError
@@ -10,11 +10,11 @@ class StockPicking(models.Model):
 
     @api.model
     def process_wms_scan(self, picking_id, action='scan', line_id=None):
-        \"\"\"
+        """
         Punto de entrada principal RPC desde la PDA.
-        Gestiona la lógica asíncrona de tiempos (Productivo/Muerto).
+        Gestiona la logica asincrona de tiempos (Productivo/Muerto).
         action puede ser: 'scan', 'pause', 'play', 'close_line'
-        \"\"\"
+        """
         picking = self.browse(picking_id)
         if not picking.exists() or not picking.picking_type_id.seguimiento_wms:
             return {'status': 'ignored'}
@@ -140,8 +140,8 @@ class StockPicking(models.Model):
                         })
                     else:
                         # Si es el mismo intervalo y misma hora, no sumamos ciegamente +1.
-                        # El cálculo de cantidades completadas (qty_done) lo realiza el modelo de forma computada.
-                        # Forzamos una escritura vacía si quisiéramos actualizar write_date, pero ya nos apalancamos en el write_date del picking.
+                        # El calculo de cantidades completadas (qty_done) lo realiza el modelo de forma computada.
+                        # Forzamos una escritura vacia si quisieramos actualizar write_date, pero ya nos apalancamos en el write_date del picking.
                         pass
 
             return {'status': 'scanned'}
