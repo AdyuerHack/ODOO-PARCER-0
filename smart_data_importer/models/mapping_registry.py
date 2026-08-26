@@ -6,8 +6,8 @@ class MappingRegistry(models.Model):
     _order = 'priority desc, id'
 
     synonym = fields.Char(string='Synonym', required=True)
-    model_id = fields.Many2one('ir.model', string='Model', required=True)
-    field_id = fields.Many2one('ir.model.fields', string='Field', required=True, domain="[('model_id', '=', model_id)]")
+    model_id = fields.Many2one('ir.model', string='Model', required=True, ondelete='cascade')
+    field_id = fields.Many2one('ir.model.fields', string='Field', required=True, domain="[('model_id', '=', model_id)]", ondelete='cascade')
     language = fields.Selection([
         ('es', 'Spanish'),
         ('en', 'English')
