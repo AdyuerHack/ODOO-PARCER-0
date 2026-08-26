@@ -53,7 +53,7 @@
         <record id="mapping_es_celular" model="mapping.registry">
             <field name="synonym">Celular</field>
             <field name="model_id" search="[('model', '=', 'res.partner')]"/>
-            <field name="field_id" search="[('name', '=', 'mobile'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'phone'), ('model_id.model', '=', 'res.partner')]"/>
             <field name="language">es</field>
         </record>
 
@@ -123,7 +123,7 @@
         <record id="mapping_en_mobile" model="mapping.registry">
             <field name="synonym">Mobile</field>
             <field name="model_id" search="[('model', '=', 'res.partner')]"/>
-            <field name="field_id" search="[('name', '=', 'mobile'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'phone'), ('model_id.model', '=', 'res.partner')]"/>
             <field name="language">en</field>
         </record>
 
