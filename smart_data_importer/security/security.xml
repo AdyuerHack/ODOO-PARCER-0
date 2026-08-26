@@ -11,6 +11,7 @@
         <record id="group_smart_importer_admin" model="res.groups">
             <field name="name">Administrator</field>
             <field name="implied_ids" eval="[(4, ref('group_smart_importer_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
         <record id="rule_import_session_personal" model="ir.rule">
