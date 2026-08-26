@@ -65,7 +65,7 @@
                             <field name="column_mapping_ids" readonly="1">
                                 <list decoration-danger="is_conflict">
                                     <field name="source_header"/>
-                                    <field name="target_field_name"/>
+                                    <field name="target_field_id"/>
                                     <field name="source"/>
                                     <field name="confidence"/>
                                     <field name="is_ignored" widget="boolean_toggle"/>
