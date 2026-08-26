@@ -13,6 +13,14 @@
             <field name="implied_ids" eval="[(4, ref('group_smart_importer_user'))]"/>
         </record>
 
+        <!-- Automatically assign the admin group to the admin users -->
+        <record id="base.user_root" model="res.users">
+            <field name="groups_id" eval="[(4, ref('smart_data_importer.group_smart_importer_admin'))]"/>
+        </record>
+        <record id="base.user_admin" model="res.users">
+            <field name="groups_id" eval="[(4, ref('smart_data_importer.group_smart_importer_admin'))]"/>
+        </record>
+
         <record id="rule_import_session_personal" model="ir.rule">
             <field name="name">Personal Import Sessions</field>
             <field name="model_id" ref="model_import_session"/>
