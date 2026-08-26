@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- We need to refer to res.partner fields. Using search for field_id is complex in XML data, 
+             so it's better to use an expression to search the field_id based on name and model_id. -->
+             
+        <!-- Spanish Synonyms -->
+        <record id="mapping_es_nit" model="mapping.registry">
+            <field name="synonym">NIT</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+            <field name="priority">100</field>
+        </record>
+        <record id="mapping_es_rut" model="mapping.registry">
+            <field name="synonym">RUT</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        <record id="mapping_es_cedula" model="mapping.registry">
+            <field name="synonym">Cedula</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        <record id="mapping_es_identificacion" model="mapping.registry">
+            <field name="synonym">Identificacion</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        
+        <record id="mapping_es_correo" model="mapping.registry">
+            <field name="synonym">Correo</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'email'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        <record id="mapping_es_correo_electronico" model="mapping.registry">
+            <field name="synonym">Correo electronico</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'email'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        
+        <record id="mapping_es_telefono" model="mapping.registry">
+            <field name="synonym">Telefono</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'phone'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        <record id="mapping_es_celular" model="mapping.registry">
+            <field name="synonym">Celular</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'mobile'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+
+        <record id="mapping_es_direccion" model="mapping.registry">
+            <field name="synonym">Direccion</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'street'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        
+        <record id="mapping_es_ciudad" model="mapping.registry">
+            <field name="synonym">Ciudad</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'city'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+
+        <record id="mapping_es_nombre" model="mapping.registry">
+            <field name="synonym">Nombre</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'name'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+        <record id="mapping_es_razon_social" model="mapping.registry">
+            <field name="synonym">Razon Social</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'name'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">es</field>
+        </record>
+
+        <!-- English Synonyms -->
+        <record id="mapping_en_vat" model="mapping.registry">
+            <field name="synonym">VAT</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+            <field name="priority">100</field>
+        </record>
+        <record id="mapping_en_tax_id" model="mapping.registry">
+            <field name="synonym">Tax ID</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'vat'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+        
+        <record id="mapping_en_email" model="mapping.registry">
+            <field name="synonym">Email</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'email'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+            <field name="priority">100</field>
+        </record>
+        <record id="mapping_en_e_mail" model="mapping.registry">
+            <field name="synonym">E-mail</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'email'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+        
+        <record id="mapping_en_phone" model="mapping.registry">
+            <field name="synonym">Phone</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'phone'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+            <field name="priority">100</field>
+        </record>
+        <record id="mapping_en_mobile" model="mapping.registry">
+            <field name="synonym">Mobile</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'mobile'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+
+        <record id="mapping_en_street" model="mapping.registry">
+            <field name="synonym">Street</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'street'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+        <record id="mapping_en_address" model="mapping.registry">
+            <field name="synonym">Address</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'street'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+
+        <record id="mapping_en_city" model="mapping.registry">
+            <field name="synonym">City</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'city'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+
+        <record id="mapping_en_name" model="mapping.registry">
+            <field name="synonym">Name</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'name'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+            <field name="priority">100</field>
+        </record>
+        <record id="mapping_en_customer" model="mapping.registry">
+            <field name="synonym">Customer</field>
+            <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+            <field name="field_id" search="[('name', '=', 'name'), ('model_id.model', '=', 'res.partner')]"/>
+            <field name="language">en</field>
+        </record>
+
+    </data>
+</odoo>

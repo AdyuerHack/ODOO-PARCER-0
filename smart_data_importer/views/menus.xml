@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top Level Menu -->
+    <menuitem id="menu_smart_importer_root"
+              name="Smart Importer"
+              sequence="50"
+              groups="smart_data_importer.group_smart_importer_user"/>
+
+    <!-- Submenus -->
+    <menuitem id="menu_smart_importer_sessions"
+              name="Sessions"
+              parent="menu_smart_importer_root"
+              action="action_import_session"
+              sequence="10"/>
+
+    <menuitem id="menu_smart_importer_config"
+              name="Configuration"
+              parent="menu_smart_importer_root"
+              sequence="100"
+              groups="smart_data_importer.group_smart_importer_admin"/>
+
+    <menuitem id="menu_smart_importer_settings"
+              name="Settings"
+              parent="menu_smart_importer_config"
+              action="action_smart_importer_configuration"
+              sequence="10"/>
+</odoo>

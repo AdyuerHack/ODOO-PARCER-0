@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="smart_data_importer.PreviewTable">
+        <div class="o_preview_table_widget table-responsive">
+            <t t-if="state.loading">
+                <p>Loading preview...</p>
+            </t>
+            <t t-elif="state.rows.length === 0">
+                <p class="text-muted">No data to preview.</p>
+            </t>
+            <t t-else="">
+                <table class="table table-sm table-bordered table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <t t-foreach="state.columns" t-as="col" t-key="col">
+                                <th><t t-esc="col"/></th>
+                            </t>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="state.rows" t-as="row" t-key="row_index">
+                            <tr>
+                                <t t-foreach="state.columns" t-as="col" t-key="col_index">
+                                    <td class="text-truncate" style="max-width: 200px;" t-att-title="row[col]">
+                                        <t t-esc="row[col]"/>
+                                    </td>
+                                </t>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+        </div>
+    </t>
+</templates>
