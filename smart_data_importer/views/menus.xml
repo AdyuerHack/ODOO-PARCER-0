@@ -4,7 +4,7 @@
     <menuitem id="menu_smart_importer_root"
               name="Smart Importer"
               sequence="50"
-              groups="smart_data_importer.group_smart_importer_user"/>
+              groups="base.group_user"/>
 
     <!-- Submenus -->
     <menuitem id="menu_smart_importer_sessions"
@@ -17,7 +17,7 @@
               name="Configuration"
               parent="menu_smart_importer_root"
               sequence="100"
-              groups="smart_data_importer.group_smart_importer_admin"/>
+              groups="base.group_user"/>
 
     <menuitem id="menu_smart_importer_settings"
               name="Settings"
