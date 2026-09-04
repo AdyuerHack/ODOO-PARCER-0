@@ -8,9 +8,10 @@ class ImportColumnMapping(models.Model):
     source_header = fields.Char(string='Original Header', required=True)
     source_header_normalized = fields.Char(string='Normalized Header', required=True)
     sample_values = fields.Char(string='Sample Values')
-    
+
     target_field_id = fields.Many2one('ir.model.fields', string='Target Field', domain="[('model_id.model', '=', 'res.partner')]")
-    
+    target_field_name = fields.Char(related='target_field_id.field_description', string='Target Field Name', store=True, readonly=True)
+
     confidence = fields.Float(string='Confidence Score', help="From 0.0 to 1.0")
     source = fields.Selection([
         ('template', 'Template'),
@@ -19,7 +20,7 @@ class ImportColumnMapping(models.Model):
         ('llm', 'LLM'),
         ('manual', 'Manual')
     ], string='Source')
-    
+
     is_ignored = fields.Boolean(string='Ignore', default=False)
     is_conflict = fields.Boolean(string='Conflict', help="Target field is assigned to multiple columns", default=False)
     cleansing_rule_ids = fields.Many2many('import.cleansing.rule', string='Cleansing Rules')
